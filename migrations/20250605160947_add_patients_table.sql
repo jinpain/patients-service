@@ -9,7 +9,8 @@ CREATE TABLE patients (
     gender bool DEFAULT NULL,
     snils CHAR(11) DEFAULT NULL,
     inn CHAR(12) DEFAULT NULL,
-    enp CHAR(16) DEFAULT NULL
+    enp CHAR(16) DEFAULT NULL,
+    marital_status SMALLINT DEFAULT NULL
 )
 -- +goose StatementEnd
 
