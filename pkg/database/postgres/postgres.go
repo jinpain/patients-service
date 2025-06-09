@@ -16,6 +16,11 @@ type key string
 
 const transactionKey key = "transaction"
 
+type DbExecutor interface {
+	QueryRow(ctx context.Context, query string, args ...any) pgx.Row
+	Exec(ctx context.Context, query string, args ...any) (pgconn.CommandTag, error)
+}
+
 type PgContext struct {
 	Pool        *pgxpool.Pool
 	connTimeout time.Duration
@@ -45,7 +50,7 @@ func NewPostgresConnect(dbCfg *config.Db) (*PgContext, error) {
 	}, nil
 }
 
-func (pg *PgContext) TxOrDb(ctx context.Context) dbExecutor {
+func (pg *PgContext) TxOrDb(ctx context.Context) DbExecutor {
 	tx, ok := ctx.Value(transactionKey).(pgx.Tx)
 	if !ok {
 		return pg.Pool
@@ -66,9 +71,4 @@ func (p *PgContext) Close() {
 	if p.Pool != nil {
 		p.Pool.Close()
 	}
-}
-
-type dbExecutor interface {
-	QueryRow(ctx context.Context, query string, args ...any) pgx.Row
-	Exec(ctx context.Context, query string, args ...any) (pgconn.CommandTag, error)
 }
